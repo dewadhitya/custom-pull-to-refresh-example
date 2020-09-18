@@ -1,6 +1,6 @@
 # CUSTOM PULL TO REFRESH EXAMPLE
 
-...
+![Custom Pull to Refresh Demo](assets/demo.gif)
 
 ## Credits :
 Packages : 
