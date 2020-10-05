@@ -34,6 +34,21 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double _offsetToArmed = 100;
+  bool isRefresh = false;
+
+  Future<void> _refreshFunction() {
+    setState(() {
+      isRefresh = true;
+    });
+    Future.delayed(Duration(seconds: 5), () {
+      setState(() {
+        isRefresh = false;
+      });
+      Fluttertoast.showToast(msg: "Refresh Completed");
+    });
+
+    return Future.value(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: CustomRefreshIndicator(
-        onRefresh: () => Future.delayed(Duration(seconds: 5), () {
-          Fluttertoast.showToast(msg: "Refresh Completed");
-        }),
+        onRefresh: _refreshFunction,
         offsetToArmed: _offsetToArmed,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -75,22 +88,39 @@ class _MyHomePageState extends State<MyHomePage> {
               return Stack(
                 alignment: Alignment.topCenter,
                 children: [
-                  if (!controller.isIdle)
-                    Container(
-                      color: Colors.grey[200],
-                      height: _offsetToArmed * controller.value,
-                      width: double.infinity,
-                      child: SpinKitSquareCircle(
-                        color: Colors.teal,
-                      ),
+                  !controller.isIdle 
+                  ? Container(
+                    color: Colors.grey[200],
+                    height: _offsetToArmed * controller.value,
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          controller.isArmed ? Icons.arrow_circle_up : Icons.arrow_circle_down,
+                          color: Colors.teal,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          controller.isArmed ? "Release to refresh" : "Pull down to refresh",
+                        ),
+                      ],
                     ),
+                  ) 
+                  : this.isRefresh
+                  ? Container(
+                    color: Colors.grey[200],
+                    height: _offsetToArmed,
+                    width: double.infinity,
+                    child: SpinKitCircle(
+                      color: Colors.teal,
+                    ),
+                  ) : Container(),
                   Transform.translate(
-                    offset: Offset(0, _offsetToArmed * controller.value),
-                    child: AnimatedOpacity(
-                      opacity: controller.isIdle ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 450),
-                      child: child,
-                    ),
+                    offset: Offset(0, this.isRefresh ? _offsetToArmed : _offsetToArmed * controller.value),
+                    child: child,
                   ),
                 ],
               );
