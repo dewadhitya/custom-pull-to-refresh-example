@@ -48,6 +48,8 @@ CustomRefreshIndicator(
 ),
 ```
 
+#### If you need more inspiration using custom refresh, check the 'custom-1' branch!
+
 ## Credits :
 #### Packages : 
 - custom_refresh_indicator 0.8.0+1 : https://pub.dev/packages/custom_refresh_indicator
